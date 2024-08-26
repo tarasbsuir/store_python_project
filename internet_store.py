@@ -1,0 +1,1 @@
+# Class describes internet store

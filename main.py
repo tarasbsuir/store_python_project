@@ -1,0 +1,1 @@
+# Main class for internet store
