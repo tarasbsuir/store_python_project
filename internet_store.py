@@ -1,4 +1,18 @@
+# Module describes internet store
+
 from sqlite3 import Cursor
 
 
-# Class describes internet store
+class Internet_Store:
+    '''Class description'''
+    pass
+
+
+class Product:
+    '''Class description'''
+    pass
+
+
+class App:
+    '''Class description'''
+    pass
