@@ -1,11 +1,11 @@
 ''' Main module for internet store. '''
 
 
-import internet_store
+from internet_store import App
 
 
 def main():
-    pass
+    App().Run()
 
 if __name__ == '__main__':
     print("main.py - run as a standalone program.\n")
