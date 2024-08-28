@@ -9,18 +9,19 @@ EXIT_MSG = ('''
              |||                        SEE YA!                      |||
              |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             ''')
+ABOUT_MSG = 'Internet Store. Use this program to make your purchases.'
 
 
 class Internet_Store:
     '''Class description'''
-    # Список товаров, добавить товар, убрать товары, продать  и т.д.
+    # TODO: Список товаров, добавить товар, убрать товары, продать  и т.д.
     
     def __init__(self) -> None:
         self.conn = s.connect('internet_store.db')
         self.c = self.conn.cursor()
         
     def add_product(self):
-        '''Method addes product in list. (принять на склад)''' 
+        '''Method addes product in list.''' 
         self.name = input('Enter product name: ')
         self.description = input('Enter product description: ')
         self.price = input('Enter product price: ')
@@ -28,25 +29,39 @@ class Internet_Store:
         self.c.execute('INSERT INTO goods (name, description, price, status) VALUES (?, ?, ?, ?)',
                        (self.name, self.description, self.price, self.status))
         self.conn.commit()
+        self.conn.close()
         print(f'Product was added: {self.name}')
         
     def delete_product(self):
-        '''Method deletes product from list. (удалить товар)'''
-        # Under development
-        pass
-    
+        '''Method deletes product from list by article.'''
+        article = int(input('Enter product article: '))
+        self.c.execute('DELETE FROM goods WHERE article = ?', (article,))
+        self.conn.commit()
+        self.conn.close()
+        print(f'Product #{article} was deleted successfully.')
+
     def show_product_list(self):
         '''Method shows list of products. (показать все товары)'''
-        # Under development
-        pass
-    
+        self.c.execute('SELECT * from goods')
+        self.rows = self.c.fetchall()
+        for row in self.rows:
+            print(row)
+        self.conn.close()
+
+
+
+
+
+
+
+
+
+
+
     def sell_product(self):
         '''Method for seling goods. (продавать товары)'''
-        # Under development
+        # Under development (ИЗМЕНИТЬ СТАТУТ товара В БД)
         pass
-                
-    def close_conn(self):
-        self.conn.close()
 
 
 class Product:
@@ -57,7 +72,9 @@ class Product:
 
 class Store_Users:
     '''Class description'''
-    # Этот класс вобще нужен? Что с ним сделать?
+    # Этот класс вобще нужен? Что с ним сделать? Класс для админки, вносить изменения в таблицу юзеров
+
+
     pass
 
 
@@ -67,14 +84,13 @@ class App:
         self.cond = True
 
     def Run(self):
-        print('''
-        Internet Store. Use this program to make your purchases.
-            ''')
+        print(ABOUT_MSG)
         while self.cond:
             print(
                 '''MENU:
 1 - Sign in
-2 - Register (пока не работает)
+2 - Register (пока не работает) - только с ролью юзер
+3 - About Store
 0 - Exit'''
             )
             user_operation = input("Input operation: ")
@@ -84,7 +100,7 @@ class App:
                 user_pass = getpass.getpass("Enter user password: ")
                 
                 
-                conn = s.connect('internet_store.db') # Может создать отдельный класс DB_Connect?
+                conn = s.connect('internet_store.db')
                 c = conn.cursor()
                 c.execute('SELECT user_role from users where user_name = ? and user_pass = ?',
                           (user_name, user_pass))
@@ -118,6 +134,7 @@ class App:
                         print('all users')
                     elif user_operation == "0":
                         self.cond = False
+                        conn.close()
                         print(EXIT_MSG)
                     else:
                         print("Wrong command!!!")
@@ -127,7 +144,7 @@ class App:
                     print(
                 '''MANAGER MENU: 
 1 - add product
-2 - del product
+2 - delete product
 3 - show all products
 4 - find product by name
 5 - find product by article (id)
@@ -142,9 +159,11 @@ class App:
                         print("ADD product")
                         Internet_Store().add_product()
                     elif user_operation == '2':
-                        print('del product')
+                        print('delete product')
+                        Internet_Store().delete_product()
                     elif user_operation == '3':
                         print("show all products")
+                        Internet_Store().show_product_list()
                     elif user_operation == '4':
                         print('find product by name')
                     elif user_operation == '5':
@@ -159,6 +178,7 @@ class App:
                         print('change product description')
                     elif user_operation == "0":
                         self.cond = False
+                        conn.close()
                         print(EXIT_MSG)
                     else:
                         print("Wrong command!!!")
@@ -175,7 +195,7 @@ class App:
                     )
                     user_operation = input("Input operation: ")
                     if user_operation == '1':
-                        print("show all products")
+                        print("show all products")  # только селект по доступным товарам со статусом 1 в наличии
                     elif user_operation == '2':
                         print('find product by name')
                     elif user_operation == '3':
@@ -194,6 +214,9 @@ class App:
             # REG NEW USER.        
             elif user_operation == "2":
                 print("REG NEW USER")
+
+            elif user_operation == "3":
+                print(ABOUT_MSG)
 
             elif user_operation == "0":
                 self.cond = False
