@@ -1,7 +1,7 @@
-''' Main module for internet store. '''
-
-
 from internet_store import App
+
+
+''' Main module for internet store. '''
 
 
 def main():

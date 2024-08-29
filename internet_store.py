@@ -13,19 +13,23 @@ EXIT_MSG = ('''
 ABOUT_MSG = 'Internet Store. Use this program to make your purchases.'
 
 
-class Internet_Store:
-    '''Class describes Internet Store.'''
-    
+class DB_Connect:
+    '''Class describes connection to database (SQLlite).'''
     def __init__(self) -> None:
         self.conn = s.connect('internet_store.db')
         self.c = self.conn.cursor()
-        
+
+
+class Internet_Store(DB_Connect):
+    '''Class describes Internet Store.'''
+    
     def add_product(self):
         '''Method addes product in list.''' 
         self.name = input('Enter product name: ')
         self.description = input('Enter product description: ')
         self.price = input('Enter product price: ')
-        self.c.execute('INSERT INTO goods (name, description, price, status) VALUES (?, ?, ?, ?)',
+        self.c.execute('INSERT INTO goods (name, description, price, status)\
+                       VALUES (?, ?, ?, ?)',
                        (self.name, self.description, self.price, 1))
         self.conn.commit()
         self.conn.close()
@@ -42,16 +46,16 @@ class Internet_Store:
     def show_product_list_for_manager(self):
         '''Method shows list of products (all products).'''
         self.c.execute('SELECT * from goods')
-        self.rows = self.c.fetchall()
-        for row in self.rows:
+        rows = self.c.fetchall()
+        for row in rows:
             print(row)
         self.conn.close()
         
     def show_product_list_for_user(self):
-        '''Method shows list of products (all available products for users).'''
+        '''Method shows list of products (all available products for user).'''
         self.c.execute('SELECT * from goods WHERE status = 1')
-        self.rows = self.c.fetchall()
-        for row in self.rows:
+        rows = self.c.fetchall()
+        for row in rows:
             print(row[:4])  # Cut status for users.
         self.conn.close()
 
@@ -59,7 +63,8 @@ class Internet_Store:
         '''Method for selling goods (sell product). 
         To sell product change status to 2.'''
         article = input('Enter product article: ')
-        self.c.execute('UPDATE goods SET status = 2 WHERE article = ?', (article))
+        self.c.execute('UPDATE goods SET status = 2 WHERE article = ?',
+                       (article))
         self.conn.commit()
         self.conn.close()
         print(f'Product #{article} was sold.')
@@ -79,17 +84,50 @@ class Internet_Store:
         return self.row
 
 
-class Product(Internet_Store):
-    '''Class describes product.'''
-    pass
-    '''TODO: 6 - change product price
-             7 - change product status
-             8 - change product name
-             9 - change product description
-             '''
+class Product(DB_Connect):
+    '''Class describes product and can change product fields in DB.'''
+    def chnage_product_price(self):
+        '''Method chnages product price.'''
+        article = input('Enter product article: ')
+        price = input('Enter new price: ')
+        self.c.execute('UPDATE goods SET price = ? WHERE article = ?',
+                       (price, article,))
+        self.conn.commit()
+        self.conn.close()
+        print(f'Price for product with article #{article} was changed.')
+
+    def chnage_product_status(self):
+        '''Method chnages product status.'''
+        article = input('Enter product article: ')
+        status = input('Enter new status: ')
+        self.c.execute('UPDATE goods SET status = ? WHERE article = ?',
+                       (status, article,))
+        self.conn.commit()
+        self.conn.close()
+        print(f'Status for product with article #{article} was changed.')
+
+    def chnage_product_name(self):
+        '''Method chnages product name.'''
+        article = input('Enter product article: ')
+        name = input('Enter new product name: ')
+        self.c.execute('UPDATE goods SET name = ? WHERE article = ?',
+                       (name, article,))
+        self.conn.commit()
+        self.conn.close()
+        print(f'Name for product with article #{article} was changed.')
+
+    def chnage_product_description(self):
+        '''Method chnages product description.'''
+        article = input('Enter product article: ')
+        description = input('Enter new description: ')
+        self.c.execute('UPDATE goods SET description = ? WHERE article = ?',
+                       (description, article,))
+        self.conn.commit()
+        self.conn.close()
+        print(f'Description for product with article #{article} was changed.')
 
 
-class Store_Users_Admin:
+class Store_Users_Admin(DB_Connect):
     '''Class for manage users.'''
 
     def __init__(self) -> None:
@@ -98,18 +136,42 @@ class Store_Users_Admin:
         
     def add_user(self, user_name, user_role, user_pass):
         '''Method addes user in DB. Accept 3 args name, role, pass'''
-        self.c.execute('INSERT INTO users (user_name, user_role, user_pass) VALUES (?, ?, ?)',
-                       (user_name, user_role, user_pass))
+        self.c.execute('INSERT INTO users (user_name, user_role, user_pass)\
+                       VALUES (?, ?, ?)', (user_name, user_role, user_pass))
         self.conn.commit()
         self.conn.close()
         print(f'User was added: {user_name}')
+
+    def delete_user(self):
+        user_id = input('Enter user_id: ')
+        self.c.execute('DELETE FROM users WHERE user_id = ?', (user_id,))
+        self.conn.commit()
+        self.conn.close()
+        print(f'User with ID #{user_id} was deleted successfully.')
+
+    def block_user(self):
+        user_id = input('Enter user_id: ')
+        self.c.execute('UPDATE users SET user_role = 3 WHERE user_id = ?',
+                       (user_id,))
+        self.conn.commit()
+        self.conn.close()
+        print(f'User with ID #{user_id} was blocked successfully.')
+
+    def change_user_password(self):
+        user_id = input('Enter user_id: ')
+        user_pass = getpass.getpass('Please enter new password: ')
+        self.c.execute('UPDATE users SET user_pass = ? WHERE user_id = ?',
+                       (user_pass, user_id,))
+        self.conn.commit()
+        self.conn.close()
+        print(f'User with ID #{user_id} was blocked successfully.')
     
-    '''TODO:
-    2 - del user
-    3 - block user
-    4 - upd user pass
-    5 - show all users
-    '''
+    def show_all_users(self):
+        self.c.execute('SELECT * FROM users')
+        rows = self.c.fetchall()
+        for row in rows:
+            print(row)
+        self.conn.close()
 
 
 class App:
@@ -133,13 +195,11 @@ class App:
                 user_name = input("Enter user name: ")
                 user_pass = getpass.getpass("Enter user password: ")
                 
-                
                 conn = s.connect('internet_store.db')
                 c = conn.cursor()
-                c.execute('SELECT user_role from users where user_name = ? and user_pass = ?',
-                          (user_name, user_pass))
+                c.execute('SELECT user_role from users where user_name = ?\
+                          and user_pass = ?', (user_name, user_pass))
                 result_of_select = c.fetchall()
-                
                 
                 if result_of_select == []:
                     print('USER NOT FOUND or password is incorrect.')
@@ -153,6 +213,7 @@ class App:
 3 - block user
 4 - upd user pass
 5 - show all users
+6 - specific command (under development)
 0 - Exit'''
                     )
                     user_operation = input("Input operation: ")
@@ -170,12 +231,19 @@ class App:
                         Store_Users_Admin().add_user(user_name, user_role, user_pass)
                     elif user_operation == '2':
                         print('del user')
+                        Store_Users_Admin().delete_user()
                     elif user_operation == '3':
                         print("block user")
+                        Store_Users_Admin().block_user()
                     elif user_operation == '4':
                         print('upd user pass')
+                        Store_Users_Admin().change_user_password()
                     elif user_operation == '5':
                         print('all users')
+                        Store_Users_Admin().show_all_users()
+                    elif user_operation == '6':
+                        print('Send specific SQL command into DB.')
+                        print('Under development')
                     elif user_operation == "0":
                         self.cond = False
                         conn.close()
@@ -219,12 +287,16 @@ class App:
                         print(res)
                     elif user_operation == '6':
                         print('change product price')
+                        Product().chnage_product_price()
                     elif user_operation == '7':
                         print('change product status')
+                        Product().chnage_product_status()
                     elif user_operation == '8':
                         print('change product name')
+                        Product().chnage_product_name()
                     elif user_operation == '9':
                         print('change product description')
+                        Product().chnage_product_description()
                     elif user_operation == "0":
                         self.cond = False
                         conn.close()
@@ -248,11 +320,18 @@ class App:
                         Internet_Store().show_product_list_for_user()
                     elif user_operation == '2':
                         print('find product by name')
-                        res = Internet_Store().find_product_by_name()  # Добавть срез статуса товара или добавить условие если статус не 1 то нет товара если 1 то есть
-                        print(res)
+                        res = Internet_Store().find_product_by_name()
+                        if res[4] == 1:
+                            print(res[:4])
+                        else:
+                            print('Product not found.')
                     elif user_operation == '3':
                         print("find product by article")
-                        res = Internet_Store().find_product_by_article()  # -----//-----
+                        res = Internet_Store().find_product_by_article()
+                        if res[4] == 1:
+                            print(res[:4])
+                        else:
+                            print('Product not found.')
                         print(res)
                     elif user_operation == '4':
                         print('buy product')
