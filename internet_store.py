@@ -14,12 +14,7 @@ ABOUT_MSG = 'Internet Store. Use this program to make your purchases.'
 
 
 class Internet_Store:
-<<<<<<< Updated upstream
     '''Class describes Internet Store.'''
-=======
-    '''Class description'''
-    # TODO: Список товаров, добавить товар, убрать товары, продать  и т.д.
->>>>>>> Stashed changes
     
     def __init__(self) -> None:
         self.conn = s.connect('internet_store.db')
@@ -38,29 +33,19 @@ class Internet_Store:
         
     def delete_product(self):
         '''Method deletes product from list by article.'''
-<<<<<<< Updated upstream
         article = input('Enter product article: ')
-=======
-        article = int(input('Enter product article: '))
->>>>>>> Stashed changes
         self.c.execute('DELETE FROM goods WHERE article = ?', (article,))
         self.conn.commit()
         self.conn.close()
         print(f'Product #{article} was deleted successfully.')
 
-<<<<<<< Updated upstream
     def show_product_list_for_manager(self):
         '''Method shows list of products (all products).'''
-=======
-    def show_product_list(self):
-        '''Method shows list of products. (показать все товары)'''
->>>>>>> Stashed changes
         self.c.execute('SELECT * from goods')
         self.rows = self.c.fetchall()
         for row in self.rows:
             print(row)
         self.conn.close()
-<<<<<<< Updated upstream
         
     def show_product_list_for_user(self):
         '''Method shows list of products (all available products for users).'''
@@ -92,23 +77,6 @@ class Internet_Store:
         self.c.execute('SELECT * FROM goods WHERE article = ?', article)
         self.row = self.c.fetchall()
         return self.row
-=======
-
-
-
-
-
-
-
-
-
-
-
-    def sell_product(self):
-        '''Method for seling goods. (продавать товары)'''
-        # Under development (ИЗМЕНИТЬ СТАТУТ товара В БД)
-        pass
->>>>>>> Stashed changes
 
 
 class Product(Internet_Store):
@@ -121,7 +89,6 @@ class Product(Internet_Store):
              '''
 
 
-<<<<<<< Updated upstream
 class Store_Users_Admin:
     '''Class for manage users.'''
 
@@ -143,14 +110,6 @@ class Store_Users_Admin:
     4 - upd user pass
     5 - show all users
     '''
-=======
-class Store_Users:
-    '''Class description'''
-    # Этот класс вобще нужен? Что с ним сделать? Класс для админки, вносить изменения в таблицу юзеров
-
-
-    pass
->>>>>>> Stashed changes
 
 
 class App:
@@ -164,11 +123,7 @@ class App:
             print(
                 '''MENU:
 1 - Sign in
-<<<<<<< Updated upstream
 2 - Register user
-=======
-2 - Register (пока не работает) - только с ролью юзер
->>>>>>> Stashed changes
 3 - About Store
 0 - Exit'''
             )
@@ -253,11 +208,7 @@ class App:
                         Internet_Store().delete_product()
                     elif user_operation == '3':
                         print("show all products")
-<<<<<<< Updated upstream
                         Internet_Store().show_product_list_for_manager()
-=======
-                        Internet_Store().show_product_list()
->>>>>>> Stashed changes
                     elif user_operation == '4':
                         print('find product by name')
                         res = Internet_Store().find_product_by_name()
@@ -293,12 +244,8 @@ class App:
                     )
                     user_operation = input("Input operation: ")
                     if user_operation == '1':
-<<<<<<< Updated upstream
                         print("show all products")
                         Internet_Store().show_product_list_for_user()
-=======
-                        print("show all products")  # только селект по доступным товарам со статусом 1 в наличии
->>>>>>> Stashed changes
                     elif user_operation == '2':
                         print('find product by name')
                         res = Internet_Store().find_product_by_name()  # Добавть срез статуса товара или добавить условие если статус не 1 то нет товара если 1 то есть
@@ -322,19 +269,12 @@ class App:
             # REG NEW USER.        
             elif user_operation == "2":
                 print("REG NEW USER")
-<<<<<<< Updated upstream
                 user_name = input('Enter user name: ')
                 user_pass = getpass.getpass("Enter user password: ")
                 Store_Users_Admin().add_user(user_name, 2, user_pass)
                 
             elif user_operation == "3":
                 print(ABOUT_MSG)
-=======
-
-            elif user_operation == "3":
-                print(ABOUT_MSG)
-
->>>>>>> Stashed changes
             elif user_operation == "0":
                 self.cond = False
                 Internet_Store().conn.close()
