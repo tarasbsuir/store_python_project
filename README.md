@@ -10,5 +10,5 @@ Demonstrates working with databases.
 
 ## Author Taras Yatsenko
 
-###how to contribute
+### how to contribute
 tarasbsuir@gmail.com
