@@ -1,5 +1,5 @@
 import sqlite3 as s
-import getpass
+import pwinput
 
 
 # Module describes internet store
@@ -193,7 +193,7 @@ class App:
             
             if user_operation == "1":
                 user_name = input("Enter user name: ")
-                user_pass = getpass.getpass("Enter user password: ")
+                user_pass = pwinput.pwinput("Enter user password: ", '*')
                 
                 conn = s.connect('internet_store.db')
                 c = conn.cursor()
@@ -226,7 +226,7 @@ class App:
 3 - blocked user'''
 )
                         user_role = input('Enter user role (0-1-2-3): ')
-                        user_pass = getpass.getpass("Enter user password: ")
+                        user_pass = pwinput.pwinput("Enter user password: ", '*')
                         Store_Users_Admin().add_user(user_name, user_role, user_pass)
                     elif user_operation == '2':
                         print('del user')
