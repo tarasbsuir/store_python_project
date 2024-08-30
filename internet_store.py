@@ -213,7 +213,6 @@ class App:
 3 - block user
 4 - upd user pass
 5 - show all users
-6 - specific command (under development)
 0 - Exit'''
                     )
                     user_operation = input("Input operation: ")
@@ -241,9 +240,6 @@ class App:
                     elif user_operation == '5':
                         print('all users')
                         Store_Users_Admin().show_all_users()
-                    elif user_operation == '6':
-                        print('Send specific SQL command into DB.')
-                        print('Under development')
                     elif user_operation == "0":
                         self.cond = False
                         conn.close()
