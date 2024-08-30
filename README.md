@@ -9,3 +9,6 @@ The simplest implementation of an online store in console mode.
 Demonstrates working with databases.
 
 ## Author Taras Yatsenko
+
+###how to contribute
+tarasbsuir@gmail.com
