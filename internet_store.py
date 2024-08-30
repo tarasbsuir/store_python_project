@@ -131,7 +131,7 @@ class Store_Users_Admin(DB_Connect):
     '''Class for manage users.'''
         
     def add_user(self, user_name, user_role, user_pass):
-        '''Method addes user in DB. Accept 3 args name, role, pass'''
+        '''Method adds user in DB. Accept 3 args name, role, pass'''
         self.c.execute('INSERT INTO users (user_name, user_role, user_pass)\
                        VALUES (?, ?, ?)', (user_name, user_role, user_pass))
         self.conn.commit()
@@ -139,6 +139,7 @@ class Store_Users_Admin(DB_Connect):
         print(f'User was added: {user_name}')
 
     def delete_user(self):
+        '''Method deletes user from DB by id.'''
         user_id = input('Enter user_id: ')
         self.c.execute('DELETE FROM users WHERE user_id = ?', (user_id,))
         self.conn.commit()
@@ -146,6 +147,7 @@ class Store_Users_Admin(DB_Connect):
         print(f'User with ID #{user_id} was deleted successfully.')
 
     def block_user(self):
+        '''Method blocks user in DB by id.'''
         user_id = input('Enter user_id: ')
         self.c.execute('UPDATE users SET user_role = 3 WHERE user_id = ?',
                        (user_id,))
@@ -154,6 +156,7 @@ class Store_Users_Admin(DB_Connect):
         print(f'User with ID #{user_id} was blocked successfully.')
 
     def change_user_password(self):
+        '''Method changes user password by id.'''
         user_id = input('Enter user_id: ')
         user_pass = pwinput.pwinput("Enter user password: ", '*')
         self.c.execute('UPDATE users SET user_pass = ? WHERE user_id = ?',
@@ -163,6 +166,7 @@ class Store_Users_Admin(DB_Connect):
         print(f'User with ID #{user_id} was blocked successfully.')
     
     def show_all_users(self):
+        '''Method shows all users.'''
         self.c.execute('SELECT * FROM users')
         rows = self.c.fetchall()
         for row in rows:
@@ -179,6 +183,7 @@ class App:
         self.user_cond = True
 
     def Run(self):
+        '''Method to run application.'''
         print(ABOUT_MSG)
         while self.cond:
             print(
@@ -225,8 +230,10 @@ class App:
 3 - blocked user'''
 )
                             user_role = input('Enter user role (0-1-2-3): ')
-                            user_pass = pwinput.pwinput("Enter user password: ", '*')
-                            Store_Users_Admin().add_user(user_name, user_role, user_pass)
+                            user_pass = pwinput.pwinput("Enter user password: "
+                                                        ,'*')
+                            Store_Users_Admin().add_user(user_name,
+                                                         user_role, user_pass)
                         elif user_operation == '2':
                             print('del user')
                             Store_Users_Admin().delete_user()
