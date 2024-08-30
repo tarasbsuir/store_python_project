@@ -22,9 +22,9 @@ class DB_Connect:
 
 class Internet_Store(DB_Connect):
     '''Class describes Internet Store.'''
-    
+
     def add_product(self):
-        '''Method addes product in list.''' 
+        '''Method addes product in list.'''
         self.name = input('Enter product name: ')
         self.description = input('Enter product description: ')
         self.price = input('Enter product price: ')
@@ -34,7 +34,7 @@ class Internet_Store(DB_Connect):
         self.conn.commit()
         self.conn.close()
         print(f'Product was added: {self.name}')
-        
+
     def delete_product(self):
         '''Method deletes product from list by article.'''
         article = input('Enter product article: ')
@@ -50,7 +50,7 @@ class Internet_Store(DB_Connect):
         for row in rows:
             print(row)
         self.conn.close()
-        
+
     def show_product_list_for_user(self):
         '''Method shows list of products (all available products for user).'''
         self.c.execute('SELECT * from goods WHERE status = 1')
@@ -60,7 +60,7 @@ class Internet_Store(DB_Connect):
         self.conn.close()
 
     def sell_product(self):
-        '''Method for selling goods (sell product). 
+        '''Method for selling goods (sell product).
         To sell product change status to 2.'''
         article = input('Enter product article: ')
         self.c.execute('UPDATE goods SET status = 2 WHERE article = ?',
@@ -68,14 +68,14 @@ class Internet_Store(DB_Connect):
         self.conn.commit()
         self.conn.close()
         print(f'Product #{article} was sold.')
-        
+
     def find_product_by_name(self) -> list:
         '''Method helps find product in list by name.'''
         name = input('Please input product name: ')
         self.c.execute('SELECT * FROM goods WHERE name = ?', (name,))
         row = self.c.fetchall()
         return row
-        
+
     def find_product_by_article(self) -> list:
         '''Method helps find product in list by article(id).'''
         article = input('Please input product article: ')
@@ -129,7 +129,7 @@ class Product(DB_Connect):
 
 class Store_Users_Admin(DB_Connect):
     '''Class for manage users.'''
-        
+
     def add_user(self, user_name, user_role, user_pass):
         '''Method adds user in DB. Accept 3 args name, role, pass'''
         self.c.execute('INSERT INTO users (user_name, user_role, user_pass)\
@@ -164,7 +164,7 @@ class Store_Users_Admin(DB_Connect):
         self.conn.commit()
         self.conn.close()
         print(f'User with ID #{user_id} was blocked successfully.')
-    
+
     def show_all_users(self):
         '''Method shows all users.'''
         self.c.execute('SELECT * FROM users')
@@ -194,7 +194,7 @@ class App:
 0 - Exit'''
             )
             user_operation = input("Input operation: ")
-            
+
             if user_operation == "1":
                 user_name = input("Enter user name: ")
                 user_pass = pwinput.pwinput("Enter user password: ", '*')
@@ -203,22 +203,21 @@ class App:
                 c.execute('SELECT user_role from users where user_name = ?\
                           and user_pass = ?', (user_name, user_pass))
                 result_of_select = c.fetchall()
-                
+
                 if result_of_select == []:
                     print('USER NOT FOUND or password is incorrect.')
-                
+
                 # ADMIN MENU.
                 elif result_of_select[0] == (0,):
                     while self.admin_cond:
-                        print(
-                '''ADMIN MENU: 
+                        print('''
+ADMIN MENU:
 1 - add user
 2 - del user
 3 - block user
 4 - upd user pass
 5 - show all users
-0 - Exit'''
-                    )
+0 - Exit''')
                         user_operation = input("Input operation: ")
                         if user_operation == '1':
                             print("ADD USER")
@@ -227,11 +226,10 @@ class App:
 0 - admin
 1 - manager
 2 - user
-3 - blocked user'''
-)
+3 - blocked user''')
                             user_role = input('Enter user role (0-1-2-3): ')
-                            user_pass = pwinput.pwinput("Enter user password: "
-                                                        ,'*')
+                            user_pass = pwinput.pwinput("Enter user\
+                                                         password:", '*')
                             Store_Users_Admin().add_user(user_name,
                                                          user_role, user_pass)
                         elif user_operation == '2':
@@ -253,12 +251,12 @@ class App:
                             print(EXIT_MSG)
                         else:
                             print("Wrong command!!!")
-                
-                # MANAGER MENU.  
+
+                # MANAGER MENU.
                 elif result_of_select[0] == (1,):
                     while self.manager_cond:
-                        print(
-                '''MANAGER MENU: 
+                        print('''
+MANAGER MENU:
 1 - add product
 2 - delete product
 3 - show all products
@@ -268,8 +266,7 @@ class App:
 7 - change product status
 8 - change product name
 9 - change product description
-0 - Exit'''
-                    )
+0 - Exit''')
                         user_operation = input("Input operation: ")
                         if user_operation == '1':
                             print("ADD product")
@@ -307,18 +304,17 @@ class App:
                             print(EXIT_MSG)
                         else:
                             print("Wrong command!!!")
-                
-                # WORK USER MENU. 
+
+                # WORK USER MENU.
                 elif result_of_select[0] == (2,):
                     while self.user_cond:
-                        print(
-                '''USER MENU: 
+                        print('''
+USER MENU:
 1 - show all products
 2 - find product by name
 3 - find product by article (id)
 4 - buy product (sell product)
-0 - Exit'''
-                    )
+0 - Exit''')
                         user_operation = input("Input operation: ")
                         if user_operation == '1':
                             print("show all products")
@@ -353,23 +349,23 @@ class App:
                             print(EXIT_MSG)
                         else:
                             print("Wrong command!!!")
-                        
+
                     # USER BLOCKED.
                 elif result_of_select[0] == (3,):
                     print("User blocked. Please call administrator.")
-                    
-            # REG NEW USER.        
+
+            # REG NEW USER.
             elif user_operation == "2":
                 print("REG NEW USER")
                 user_name = input('Enter user name: ')
                 user_pass = pwinput.pwinput("Enter user password: ", '*')
                 Store_Users_Admin().add_user(user_name, 2, user_pass)
-                
+
             elif user_operation == "3":
                 print(ABOUT_MSG)
             elif user_operation == "0":
                 self.cond = False
                 Internet_Store().conn.close()
-                print(EXIT_MSG) 
+                print(EXIT_MSG)
             else:
                 print("Wrong command!!!")
